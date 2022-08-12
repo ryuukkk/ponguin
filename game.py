@@ -1,6 +1,7 @@
 import pygame as pg
 
 WIDTH, HEIGHT = 1100, 600
+PADDING = 40
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption('BURN PONG')
 
@@ -64,12 +65,32 @@ class Ball:
         self.y += self.dy
 
     def is_off_screen(self):
-        return self.x > WIDTH or self.x < 0 or self.y > HEIGHT or self.y < 0
+        return self.x > WIDTH - PADDING or self.x < PADDING
+
+    def detect_collision(self):
+        if self.y >= HEIGHT - PADDING or self.y <= PADDING:
+            self.dy *= -1
+        if self.x == right_paddle.x - self.radius and self.y in range(right_paddle.y, right_paddle.y + PADDLE_HEIGHT):
+            self.dx *= -1
+        if self.x == left_paddle.x + self.radius + PADDLE_WIDTH and self.y in range(left_paddle.y,
+                                                                                    left_paddle.y + PADDLE_HEIGHT):
+            self.dx *= -1
+
+
+class Hole:
+    def __init__(self, x, y, height):
+        self.x, self.y = x, y
+        self.height = height
+
+    # PENDING IMPLEMENTATION:
+    # 1. HOLE CLASS
+    # 2. PLAY AREA
+    # 3. ROTATE
 
 
 # Creating Paddles and Ball
-left_paddle = Paddle(10, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
-right_paddle = Paddle(WIDTH - PADDLE_WIDTH - 10, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+left_paddle = Paddle(10 + PADDING, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+right_paddle = Paddle(WIDTH - PADDLE_WIDTH - 10 - PADDING, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
 ball1 = Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
 
 
@@ -100,6 +121,7 @@ def ball_movement(user_input, ball):
 
     if GAME_STARTED:
         ball.move()
+        ball.detect_collision()
 
     if ball.is_off_screen():
         GAME_STARTED = False
