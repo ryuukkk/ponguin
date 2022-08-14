@@ -1,4 +1,5 @@
 import pygame as pg
+import cProfile, io, pstats
 
 # PENDING IMPLEMENTATIONS:
 # 1. PADDLE ROTATION AND PUSH
@@ -193,4 +194,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    with cProfile.Profile() as pr:
+        main()
+    pr.print_stats(sort='cumtime')
+
+
