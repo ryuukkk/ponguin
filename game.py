@@ -1,5 +1,5 @@
 import pygame as pg
-import cProfile, io, pstats
+import cProfile
 
 # PENDING IMPLEMENTATIONS:
 # 1. PADDLE ROTATION AND PUSH
@@ -18,8 +18,10 @@ import cProfile, io, pstats
 
 WIDTH, HEIGHT = 1100, 600
 PADDING = 40
-WIN = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption('BURN PONG')
+def setup():
+    global WIN
+    WIN = pg.display.set_mode((WIDTH, HEIGHT))
+    pg.display.set_caption('BURN PONG')
 
 FPS = 60
 WHITE = (255, 255, 255)
@@ -177,7 +179,7 @@ def draw_game(win, paddles, balls, holes):
 def main():
     run = True
     clock = pg.time.Clock()
-
+    setup()
     while run:
         clock.tick(FPS)  # to lock the fps at 60 in every computer
         user_input = pg.key.get_pressed()
@@ -197,5 +199,3 @@ if __name__ == '__main__':
     with cProfile.Profile() as pr:
         main()
     pr.print_stats(sort='cumtime')
-
-
