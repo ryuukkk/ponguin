@@ -1,4 +1,5 @@
 import pygame as pg
+import abstracts
 
 WIDTH, HEIGHT = 1100, 600
 PADDING = 40
@@ -9,29 +10,22 @@ BG_ELEMENTS_COLOR = (200, 200, 200)
 HOLE_COLOR = (0, 100, 100)
 PADDLE_HEIGHT = 100
 PADDLE_WIDTH = 20
-PADDLES = []
-BALLS = []
-HOLES = []
 BALL_RADIUS = 7
 LEFT, RIGHT = -1, 1
 GAME_STARTED = False
 PLAY_WIDTH, PLAY_HEIGHT = WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING
+HOLE_HEIGHT = PLAY_HEIGHT * 0.6
 
 
 # Defining a paddle
-class Paddle:
+class Paddle(abstracts.RectObjects):
     COLOR = WHITE
     VEL = 10
 
-    def __init__(self, x, y, width, height):
-        self.x, self.y = x, y
-        self.width, self.height = width, height
+    def __init__(self, x, y, width, height, side):
+        super().__init__(x, y, width, height, side)
         self.rect = pg.Surface((self.width, self.height))
         self.angle = 0
-        self.rotating = False
-        self.rotation_start_time = 0
-        self.rotation_end_time = 0
-        PADDLES.append(self)
 
     def draw(self, win):
         win.blit(self.rect, (self.x, self.y))
@@ -47,8 +41,9 @@ class Paddle:
 
 
 # Defining the ball
-class Ball:
+class Ball():
     COLOR = HOLE_COLOR
+    _instances = []
 
     def __init__(self, x, y, radius):
         self.x = x
@@ -56,7 +51,7 @@ class Ball:
         self.radius = radius
         self.dx = 10
         self.dy = 10
-        BALLS.append(self)
+        Ball._instances.append(self)
 
     def draw(self, win):
         pg.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
@@ -69,37 +64,36 @@ class Ball:
         return self.x > WIDTH - PADDING or self.x < PADDING
 
     def detect_collision(self):
-        if self.y >= HEIGHT - PADDING or self.y <= PADDING:
+        if self.y >= HEIGHT - PADDING - self.radius or self.y <= PADDING + self.radius:
             self.dy *= -1
-        if self.x >= R_PAD.x - self.radius and self.y in range(R_PAD.y, R_PAD.y + PADDLE_HEIGHT):
+        if self.x >= R_PAD.x - self.radius and R_PAD.y <= self.y <= R_PAD.y + PADDLE_HEIGHT:
             self.dx *= -1
-        if self.x <= L_PAD.x + self.radius + PADDLE_WIDTH and self.y in range(L_PAD.y,
-                                                                                    L_PAD.y + PADDLE_HEIGHT):
+        if self.x <= L_PAD.x + self.radius + PADDLE_WIDTH and L_PAD.y <= self.y <= L_PAD.y + PADDLE_HEIGHT:
             self.dx *= -1
-        if self.x <= PADDING + 6 + self.radius and self.y not in range(L_HOL.y1, L_HOL.y2):
+        if self.x <= PADDING + 6 + self.radius and not L_HOL.y <= self.y <= L_HOL.y + HOLE_HEIGHT:
             self.dx *= -1
-        if self.x >= PADDING + PLAY_WIDTH - 6 - self.radius and self.y not in range(R_HOL.y1, R_HOL.y2):
+        if self.x >= PADDING + PLAY_WIDTH - 6 - self.radius and not R_HOL.y <= self.y <= R_HOL.y + HOLE_HEIGHT:
             self.dx *= -1
 
 
-class Hole:
-    def __init__(self, y1, y2, side=LEFT):
-        self.y1, self.y2 = y1, y2
-        self.side = side
-        HOLES.append(self)
+class Hole(abstracts.RectObjects):
+    def __init__(self, x, y, width, height, side):
+        super().__init__(x, y, width, height, side)
+        self.width, self.height = width, height
+        self.rect = pg.Surface((self.width, self.height))
+        self.rect.fill(HOLE_COLOR)
 
     def draw(self, win):
-        if self.side == RIGHT:
-            pg.draw.rect(win, HOLE_COLOR, (PADDING + PLAY_WIDTH - 6, PADDING, 6, self.y1 - PADDING))
-            pg.draw.rect(win, HOLE_COLOR, (PADDING + PLAY_WIDTH - 6, self.y2, 6, HEIGHT - self.y2 - PADDING))
-        else:
-            pg.draw.rect(win, HOLE_COLOR, (PADDING, PADDING, 6, self.y1 - PADDING))
-            pg.draw.rect(win, HOLE_COLOR, (PADDING, self.y2, 6, HEIGHT - self.y2 - PADDING))
+        win.blit(self.rect, (self.x, self.y))
+
+    def move(self, win):
+        # PENDING
+        pass
 
 
-L_PAD = Paddle(10 + PADDING, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+L_PAD = Paddle(10 + PADDING, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT, LEFT)
 R_PAD = Paddle(WIDTH - PADDLE_WIDTH - 10 - PADDING, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH,
-                      PADDLE_HEIGHT)
+               PADDLE_HEIGHT, RIGHT)
 BALL_1 = Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
-L_HOL = Hole(PADDING + int(PLAY_HEIGHT * 0.1), PADDING + int(PLAY_HEIGHT * 0.9), LEFT)
-R_HOL = Hole(PADDING + int(PLAY_HEIGHT * 0.1), PADDING + int(PLAY_HEIGHT * 0.9), RIGHT)
+L_HOL = Hole(0, HEIGHT / 2 - HOLE_HEIGHT / 2, PADDING, HOLE_HEIGHT, LEFT)
+R_HOL = Hole(WIDTH - PADDING, HEIGHT / 2 - HOLE_HEIGHT / 2, PADDING, + HOLE_HEIGHT, RIGHT)
