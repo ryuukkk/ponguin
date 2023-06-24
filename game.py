@@ -86,7 +86,7 @@ def main():
         clock.tick(FPS)  # to lock the fps at 60 in every computer
         user_input = pg.key.get_pressed()
 
-        draw_game(WIN, PADDLES, BALLS, HOLES)
+        draw_game(WIN, Paddle._instances, Ball._instances, Hole._instances)
         paddle_movement(user_input, L_PAD, R_PAD)
         ball_movement(user_input, BALL_1)
         for event in pg.event.get():
