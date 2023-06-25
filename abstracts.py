@@ -15,11 +15,11 @@ class RegistrationMeta(abc.ABCMeta):
 class RectObjects(abc.ABC, metaclass=RegistrationMeta):
     @abc.abstractmethod
     def __init__(self, x, y, width, height, side):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.side = side
+        self.x = Validate('x')
+        self.y = Validate('y')
+        self.width = Validate('width')
+        self.height = Validate('height')
+        self.side = Validate('side')
 
     @abc.abstractmethod
     def draw(self, win):
@@ -28,3 +28,10 @@ class RectObjects(abc.ABC, metaclass=RegistrationMeta):
     @abc.abstractmethod
     def move(self, win):
         pass
+
+class Validate:
+    def __init__(self, attribute):
+        self.attribute = attribute
+
+    def __get__(self, instance, owner):
+        
