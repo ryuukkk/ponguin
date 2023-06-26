@@ -1,20 +1,7 @@
 import pygame as pg
 import abstracts
-
-WIDTH, HEIGHT = 1100, 600
-PADDING = 40
-FPS = 60
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-BG_ELEMENTS_COLOR = (200, 200, 200)
-HOLE_COLOR = (0, 100, 100)
-PADDLE_HEIGHT = 100
-PADDLE_WIDTH = 20
-BALL_RADIUS = 7
-LEFT, RIGHT = -1, 1
-GAME_STARTED = False
-PLAY_WIDTH, PLAY_HEIGHT = WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING
-HOLE_HEIGHT = PLAY_HEIGHT * 0.6
+from abstracts import WIDTH, HEIGHT, PADDING, FPS, WHITE, BLACK, BG_ELEMENTS_COLOR, HOLE_COLOR, PADDLE_HEIGHT, \
+    PADDLE_WIDTH, BALL_RADIUS, LEFT, RIGHT, GAME_STARTED, PLAY_WIDTH, PLAY_HEIGHT, HOLE_HEIGHT, PLAY_HEIGHT
 
 
 # Defining a paddle
@@ -43,7 +30,7 @@ class Paddle(abstracts.RectObjects):
 # Defining the ball
 class Ball():
     COLOR = HOLE_COLOR
-    _instances = []
+    instances = []
 
     def __init__(self, x, y, radius):
         self.x = x
@@ -51,7 +38,7 @@ class Ball():
         self.radius = radius
         self.dx = 10
         self.dy = 10
-        Ball._instances.append(self)
+        Ball.instances.append(self)
 
     def draw(self, win):
         pg.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)

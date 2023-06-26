@@ -1,6 +1,7 @@
 import time
 import cProfile
 from game_objects import *
+import abstracts
 
 
 # PENDING IMPLEMENTATIONS:
@@ -78,6 +79,7 @@ def draw_game(win, paddles, balls, holes):
 
 
 # Main Loop
+@abstracts.profiling
 def main():
     run = True
     clock = pg.time.Clock()
@@ -86,7 +88,7 @@ def main():
         clock.tick(FPS)  # to lock the fps at 60 in every computer
         user_input = pg.key.get_pressed()
 
-        draw_game(WIN, Paddle._instances, Ball._instances, Hole._instances)
+        draw_game(WIN, Paddle.instances, Ball.instances, Hole.instances)
         paddle_movement(user_input, L_PAD, R_PAD)
         ball_movement(user_input, BALL_1)
         for event in pg.event.get():
