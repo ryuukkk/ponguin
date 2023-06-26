@@ -1,4 +1,6 @@
 import abc
+import functools
+
 WIDTH, HEIGHT = 1100, 600
 PADDING = 40
 FPS = 60
@@ -14,16 +16,17 @@ GAME_STARTED = False
 PLAY_WIDTH, PLAY_HEIGHT = WIDTH - 2 * PADDING, HEIGHT - 2 * PADDING
 HOLE_HEIGHT = PLAY_HEIGHT * 0.6
 
+
 # Meta-class that registers objects to their respective lists when they are created
 class RegistrationMeta(abc.ABCMeta):
 
     def __new__(cls, classname, bases, attrs):
-        attrs['_instances'] = []
+        attrs['instances'] = []
         return super().__new__(cls, classname, bases, attrs)
 
     def __call__(cls, *args, **kwargs):
         instance = super().__call__(*args, **kwargs)
-        cls._instances.append(instance)
+        cls.instances.append(instance)
         return instance
 
 
@@ -72,3 +75,16 @@ class RectObjects(abc.ABC, metaclass=RegistrationMeta):
     @abc.abstractmethod
     def move(self, win):
         pass
+
+
+def profiling(function):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs):
+        import cProfile
+        profiler = cProfile.Profile()
+        profiler.enable()
+        function(*args, **kwargs)
+        profiler.disable()
+        return profiler.print_stats(sort='cumtime')
+
+    return wrapper
