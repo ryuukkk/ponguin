@@ -77,6 +77,7 @@ class RectObjects(abc.ABC, metaclass=RegistrationMeta):
         pass
 
 
+# Profiling decorator
 def profiling(function):
     @functools.wraps(function)
     def wrapper(*args, **kwargs):

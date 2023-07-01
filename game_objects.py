@@ -53,11 +53,11 @@ class Ball():
     def detect_collision(self):
         if self.y >= HEIGHT - PADDING - self.radius or self.y <= PADDING + self.radius:
             self.dy *= -1
-        if self.x >= R_PAD.x - self.radius and R_PAD.y <= self.y <= R_PAD.y + PADDLE_HEIGHT:
+        if self.x >= R_PAD.x - self.radius and R_PAD.y <= self.y+self.radius <= R_PAD.y + PADDLE_HEIGHT:
             self.dx *= -1
-        if self.x <= L_PAD.x + self.radius + PADDLE_WIDTH and L_PAD.y <= self.y <= L_PAD.y + PADDLE_HEIGHT:
+        if self.x <= L_PAD.x + self.radius + PADDLE_WIDTH and L_PAD.y <= self.y+self.radius <= L_PAD.y + PADDLE_HEIGHT:
             self.dx *= -1
-        if self.x <= PADDING + 6 + self.radius and not L_HOL.y <= self.y <= L_HOL.y + HOLE_HEIGHT:
+        if self.x <= PADDING + 6 + self.radius and not L_HOL.y <= self.y+self.radius <= L_HOL.y + HOLE_HEIGHT:
             self.dx *= -1
         if self.x >= PADDING + PLAY_WIDTH - 6 - self.radius and not R_HOL.y <= self.y <= R_HOL.y + HOLE_HEIGHT:
             self.dx *= -1
